@@ -1,0 +1,180 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    fragment@0 {
+        target = <&gpio0>;
+        __overlay__ {
+            mcu_boot: mcu_boot {
+                gpio-hog;
+
+                // GPIO0_D5
+                gpios = <29 0>;
+                output-low;
+                line-name = "mcu_boot";
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&gpio1>;
+        __overlay__ {
+            usb_hub_reset: usb_hub_reset {
+                gpio-hog;
+
+                // GPIO1_C2
+                gpios = <18 0>;
+                output-low;
+                line-name = "usb_hub_reset";
+            };
+
+            usb_hub_disable_pwr: usb_hub_disable_pwr {
+                gpio-hog;
+
+                // GPIO1_C4
+                gpios = <20 0>;
+                output-low;
+                line-name = "usb_hub_disable_pwr";
+            };
+
+            cellular_reset: cellular_reset {
+                gpio-hog;
+
+                // GPIO1_C6
+                gpios = <22 0>;
+                output-low;
+                line-name = "cellular_reset";
+            };
+
+            mcu_reset: mcu_reset {
+                gpio-hog;
+
+                // GPIO1_A3
+                gpios = <3 0>;
+                output-low;
+                line-name = "mcu_reset";
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&gpio4>;
+        __overlay__ {
+            cellular_pwr_key: cellular_pwr_key {
+                gpio-hog;
+
+                // GPIO4_B2
+                gpios = <10 0>;
+                output-low;
+                line-name = "cellular_pwr_key";
+            };
+        };
+    };
+
+    // Main I2C bus for HOPE-X base board
+    fragment@3 {
+		target = <&i2c1>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2c1m4_xfer>;
+		};
+	};
+
+    // DB9 RS-232 main communication UART
+    fragment@4 {
+		target = <&uart1>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-0 = <&uart1m1_xfer>;
+		};
+	};
+
+    // DB9 RS-232 AUX communication UART
+    fragment@5 {
+		target = <&uart0>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-0 = <&uart0m2_xfer>;
+		};
+	};
+
+    // RS-485 UART
+    fragment@6 {
+		target = <&uart3>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-0 = <&uart3m0_xfer>;
+		};
+	};
+
+    // Enable DS1307 RTC driver on I2C1
+    fragment@7 {
+        target = <&i2c1>;
+        __overlay__ {
+            status = "okay";
+
+            rtc@68 {
+                compatible = "dallas,ds1307";
+                reg = <0x68>;
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@8 {
+        target-path = "/hdmi0";
+        __overlay__ {
+            status = "okay";
+            force-hpd;  // Add this line to force Hot Plug Detect
+            
+            display-timings {
+                native-mode = <&timing0>;
+
+                timing0: timing0 {
+                    clock-frequency = <148500000>;  // Pixel clock frequency in Hz
+                    hactive = <1920>;               // Horizontal active pixels
+                    vactive = <1080>;               // Vertical active pixels
+                    hfront-porch = <88>;            // Horizontal front porch
+                    hback-porch = <148>;            // Horizontal back porch
+                    hsync-len = <44>;               // Horizontal sync length
+                    vfront-porch = <4>;             // Vertical front porch
+                    vback-porch = <36>;             // Vertical back porch
+                    vsync-len = <5>;                // Vertical sync length
+                };
+            };
+        };
+    };
+
+    fragment@9 {
+        target-path = "/hdmi0_in_vp0";
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@10 {
+        target-path = "/hdmi0_sound";
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@11 {
+        target-path = "/hdptxphy_hdmi0";
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@12 {
+        target-path = "/route_hdmi0";
+        __overlay__ {
+            status = "okay";
+        };
+    };
+};
